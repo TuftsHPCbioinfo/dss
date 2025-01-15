@@ -1,0 +1,12 @@
+geopandas
+graphviz
+imbalanced-learn
+matplotlib
+mpl_toolkits
+numpy
+pandas
+patsy
+scipy
+seaborn
+scikit-learn
+statsmodels
