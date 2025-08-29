@@ -1,5 +1,4 @@
-fitz
-frontend
+PyMuPDF
 geopandas
 graphviz
 imbalanced-learn
