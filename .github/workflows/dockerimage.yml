@@ -23,7 +23,7 @@ jobs:
         with:
           images: |
             tuftsttsrt/dss
-          tags: 2025spring
+          tags: 2025fall
       - name: Build & Publish Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -34,3 +34,4 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           build-args: |
             GPAT=${{ secrets.GPAT }}
+
