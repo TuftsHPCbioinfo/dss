@@ -1,4 +1,5 @@
 fitz
+frontend
 geopandas
 graphviz
 imbalanced-learn
