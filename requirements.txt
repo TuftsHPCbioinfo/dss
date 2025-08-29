@@ -1,3 +1,4 @@
+fitz
 geopandas
 graphviz
 imbalanced-learn
@@ -9,3 +10,4 @@ scipy
 seaborn
 scikit-learn
 statsmodels
+beautifulsoup4
