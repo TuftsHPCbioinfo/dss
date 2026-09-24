@@ -1,0 +1,69 @@
+#!/bin/sh
+set -eu
+export PATH="/opt/miniforge/bin:${PATH}"
+export MPLBACKEND=Agg
+python - <<'PY'
+import sys
+import bs4
+import fitz
+import geopandas
+import graphviz
+import imblearn
+import IPython
+import ipykernel
+import ipywidgets
+import jupyter_client
+import jupyter_core
+import jupyter_server
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import nbconvert
+import nbformat
+import notebook
+import numpy
+import pandas
+import patsy
+import scipy
+import seaborn
+import sklearn
+import statsmodels
+import statsmodels.api as sm
+versions = {
+    "Python": sys.version.replace("\n", " "),
+    "beautifulsoup4": bs4.__version__,
+    "PyMuPDF": fitz.__version__,
+    "geopandas": geopandas.__version__,
+    "graphviz": graphviz.__version__,
+    "imbalanced-learn": imblearn.__version__,
+    "IPython": IPython.__version__,
+    "ipykernel": ipykernel.__version__,
+    "ipywidgets": ipywidgets.__version__,
+    "jupyter_client": jupyter_client.__version__,
+    "jupyter_core": jupyter_core.__version__,
+    "jupyter_server": jupyter_server.__version__,
+    "matplotlib": matplotlib.__version__,
+    "nbconvert": nbconvert.__version__,
+    "nbformat": nbformat.__version__,
+    "notebook": notebook.__version__,
+    "numpy": numpy.__version__,
+    "pandas": pandas.__version__,
+    "patsy": patsy.__version__,
+    "scipy": scipy.__version__,
+    "seaborn": seaborn.__version__,
+    "scikit-learn": sklearn.__version__,
+    "statsmodels": statsmodels.__version__,
+}
+for name, version in versions.items():
+    print(f"{name}: {version}")
+# Exercise the import path that failed in the old image and perform a small fit.
+design = sm.add_constant([1.0, 2.0, 3.0, 4.0])
+model = sm.OLS([2.0, 4.1, 5.9, 8.2], design).fit()
+assert len(model.params) == 2
+assert numpy.isfinite(model.params).all()
+plt.figure()
+plt.plot([1, 2, 3], [1, 4, 9])
+plt.close()
+print("Scientific Python stack validation passed.")
+PY
+python -m pip check
