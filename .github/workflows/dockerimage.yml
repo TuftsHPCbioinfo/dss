@@ -23,7 +23,7 @@ jobs:
         with:
           images: |
             tuftsttsrt/dss
-          tags: 2025fall
+          tags: 2026fall
       - name: Build & Publish Docker Image
         uses: docker/build-push-action@v5
         with:
