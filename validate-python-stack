@@ -1,9 +1,19 @@
 #!/bin/sh
 set -eu
-export PATH="/opt/miniforge/bin:${PATH}"
+export DSS_ENV=/opt/miniforge/envs/dss-pyfix
+export PATH="${DSS_ENV}/bin:/opt/miniforge/bin:${PATH}"
 export MPLBACKEND=Agg
-python - <<'PY'
+export PROJ_DATA="${DSS_ENV}/share/proj"
+export PROJ_LIB="${DSS_ENV}/share/proj"
+export GDAL_DATA="${DSS_ENV}/share/gdal"
+DSS_PYTHON="${DSS_PYTHON:-${DSS_ENV}/bin/python}"
+if [ ! -x "${DSS_PYTHON}" ]; then
+    echo "ERROR: ${DSS_PYTHON} does not exist or is not executable." >&2
+    exit 1
+fi
+"${DSS_PYTHON}" - <<'PY'
 import sys
+from pathlib import Path
 import bs4
 import fitz
 import geopandas
@@ -30,6 +40,7 @@ import sklearn
 import statsmodels
 import statsmodels.api as sm
 versions = {
+    "Python executable": sys.executable,
     "Python": sys.version.replace("\n", " "),
     "beautifulsoup4": bs4.__version__,
     "PyMuPDF": fitz.__version__,
@@ -56,6 +67,11 @@ versions = {
 }
 for name, version in versions.items():
     print(f"{name}: {version}")
+expected_prefix = Path("/opt/miniforge/envs/dss-pyfix").resolve()
+actual_prefix = Path(sys.prefix).resolve()
+assert actual_prefix == expected_prefix, (
+    f"Validation used {actual_prefix}, expected {expected_prefix}"
+)
 # Exercise the import path that failed in the old image and perform a small fit.
 design = sm.add_constant([1.0, 2.0, 3.0, 4.0])
 model = sm.OLS([2.0, 4.1, 5.9, 8.2], design).fit()
@@ -66,4 +82,4 @@ plt.plot([1, 2, 3], [1, 4, 9])
 plt.close()
 print("Scientific Python stack validation passed.")
 PY
-python -m pip check
+"${DSS_PYTHON}" -m pip check
