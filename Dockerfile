@@ -3,15 +3,20 @@ FROM tuftsttsrt/miniforge:25.3.1
 LABEL maintainer="Yucheng Zhang <Yucheng.Zhang@tufts.edu>"
 LABEL description="Tufts Data Science for Sustainability teaching image with a compatible scientific Python and Jupyter stack"
 
-ENV PATH="/opt/miniforge/bin:${PATH}" \
+ENV DSS_ENV=/opt/miniforge/envs/dss-pyfix \
+    PATH="/opt/miniforge/envs/dss-pyfix/bin:/opt/miniforge/bin:${PATH}" \
     MPLBACKEND=Agg \
+    PROJ_DATA=/opt/miniforge/envs/dss-pyfix/share/proj \
+    PROJ_LIB=/opt/miniforge/envs/dss-pyfix/share/proj \
+    GDAL_DATA=/opt/miniforge/envs/dss-pyfix/share/gdal \
     PIP_NO_CACHE_DIR=1
 
-# Install the compiled scientific stack in one conda-forge transaction. Keeping
-# NumPy, SciPy, pandas, and statsmodels under one solver avoids ABI/API mismatches
-# caused by updating with Conda and then replacing packages with pip.
+# Build a clean environment instead of modifying the inherited base environment.
+# This avoids loading stale pip and Conda binary files from different SciPy builds.
 RUN conda config --system --set channel_priority strict \
-    && conda install --yes --name base --channel conda-forge --update-deps \
+    && conda clean --all --yes \
+    && conda create --yes --prefix "${DSS_ENV}" --channel conda-forge \
+        python=3.12 \
         beautifulsoup4 \
         geopandas \
         graphviz \
@@ -36,6 +41,10 @@ RUN conda config --system --set channel_priority strict \
         scipy \
         seaborn \
         statsmodels \
+    && "${DSS_ENV}/bin/python" -m ipykernel install \
+        --prefix=/opt/miniforge \
+        --name=dss-pyfix \
+        --display-name="Python 3 (DSS updated)" \
     && conda clean --all --yes \
     && rm -rf /root/.cache/pip
 
